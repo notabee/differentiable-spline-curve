@@ -87,7 +87,7 @@ for brush in brushes:
 
 ## Examples
 
-For more detailed usage examples and application scenarios, please refer to the [example notebooks](examples/) included in this repository.
+For more detailed usage examples and application scenarios, please refer to the [example notebooks]([examples/](https://github.com/notabee/differentiable-spline-curve/blob/main/differentiable-rendered-splines-pytorch.ipynb)) included in this repository.
 
 ## Contributing
 
@@ -95,8 +95,4 @@ Contributions to this project are welcome! If you have suggestions, improvements
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to customize this README to include additional sections or information specific to your project. Make sure to provide clear and concise instructions for users to understand and utilize your code effectively.
+This project is licensed under the APACHE License.
