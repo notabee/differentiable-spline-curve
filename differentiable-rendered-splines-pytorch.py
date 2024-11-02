@@ -13,6 +13,7 @@ class SplineInterpolation:
     def spline_interpolation(x, y, t):
         nx = len(x)
         
+        # initialising variables
         h = torch.tensor(np.diff(x), dtype=torch.float32)
         a = torch.tensor(y, dtype=torch.float32)
         A = torch.zeros((nx, nx), dtype=torch.float32)
