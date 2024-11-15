@@ -16,7 +16,6 @@ A Python implementation for rendering smooth, differentiable splines using PyTor
 ```bash
 git clone https://github.com/your-username/differentiable-spline-renderer.git
 cd differentiable-spline-renderer
-pip install -r requirements.txt
 ```
 
 Ensure you have PyTorch and Matplotlib installed in your environment.
