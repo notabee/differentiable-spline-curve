@@ -84,7 +84,7 @@ DifferentiableSpline(control_points, canvas_size=(128, 128), device='cpu')
 
 Below is a generated spline rendered with smooth blending:
 
-![Spline Example]([splines.png](splines.png))
+![Spline Example](splines.png)
 
 ---
 
