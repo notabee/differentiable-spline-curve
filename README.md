@@ -1,136 +1,100 @@
-# Differentiable Spline Curve Renderer for Neural Networks
+# Differentiable Spline Renderer
 
-This repository contains a PyTorch implementation of a differentiable spline curve renderer that seamlessly integrates into neural networks for various applications. The code allows you to create smooth spline curves that can be rendered during the backpropagation step, making it suitable for tasks like image generation, data smoothing, and more.
+A Python implementation for rendering smooth, differentiable splines using PyTorch, designed for use in machine learning and generative art tasks. This repository demonstrates the creation of quadratic Bézier curves and their visualization on a canvas with customizable colors and brush sizes.
 
-## Table of Contents
-- [Introduction](#introduction)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Spline Interpolation](#spline-interpolation)
-  - [Rendering Spline Strokes](#rendering-spline-strokes)
-  - [Batch Rendering](#batch-rendering)
-- [Examples](#examples)
-- [Contributing](#contributing)
-- [License](#license)
+## Features
 
-## Introduction
+- **Smooth spline generation**: Uses quadratic Bézier interpolation to produce smooth curves.
+- **Customizable rendering**: Specify brush sizes and colors for spline rendering.
+- **Differentiability**: Built with PyTorch, enabling gradient-based optimization.
+- **Visualization**: Render and display the resulting canvas with `matplotlib`.
 
-Spline interpolation is a widely used technique to create smooth curves that pass through a set of control points. This code provides a differentiable spline interpolation method that can be incorporated into neural networks, allowing you to optimize the control points while considering gradients for various applications.
-
-Key features:
-- Differentiable spline interpolation: The code is designed to work seamlessly with PyTorch, enabling you to use it within neural network architectures and optimize spline curves during training.
-- Spline stroke rendering: You can generate smooth spline stroke brushes, which are commonly used in image generation tasks and artistic applications.
-- Batch rendering: Render splines in batches, allowing for efficient processing in parallel.
-
-## Requirements
-
-Before you begin, ensure you have the following requirements installed:
-
-- Python 3.x
-- PyTorch 1.7.1
-- NumPy
-- Matplotlib
-- Conda
-
-tl;dr
-```
-conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=10.1 -c pytorch
-```
-the above requirements should be sufficient.
+---
 
 ## Installation
 
-1. Create a conda environment from the provided `spline.yml` file:
-
 ```bash
-conda env create -f spline.yml
-conda activate spline-env
+git clone https://github.com/your-username/differentiable-spline-renderer.git
+cd differentiable-spline-renderer
+pip install -r requirements.txt
 ```
+
+Ensure you have PyTorch and Matplotlib installed in your environment.
+
+---
 
 ## Usage
 
-### Spline Interpolation
-
-The `spline_interpolation` function allows you to perform spline interpolation for a given set of control points. Here's how to use it:
-
-```python
-import torch
-import numpy as np
-from spline_interpolation import spline_interpolation
-
-# Define control points (x and y coordinates)
-x = [0, 2, 5, 7, 8]
-y = [3, 2, 0, 2, 0]
-
-# Point at which you want to interpolate the spline
-t = 4.0
-
-# Perform spline interpolation
-result = spline_interpolation(x, y, t)
-print(result)
-```
-
-### Rendering Spline Strokes
-
-The `get_spline_stroke_brush` function allows you to generate spline stroke brushes, which can be useful for image generation or artistic applications. Here's how to use it:
+### 1. Define Control Points
+The spline requires **exactly three control points** for quadratic Bézier interpolation. Example:
 
 ```python
 import torch
-from spline_interpolation import get_spline_stroke_brush
+from differentiable_spline import DifferentiableSpline
 
-# Define control points (x and y coordinates) for a single brush
-sx = torch.tensor([0, 2, 5, 7, 8], dtype=torch.float32)
-sy = torch.tensor([3, 2, 0, 2, 0], dtype=torch.float32)
+control_points = torch.tensor([
+    [0.2, 0.3],
+    [0.5, 0.8],
+    [0.8, 0.4]
+], dtype=torch.float32)
 
-# Specify the brush radius
-brush_radius = 5
-
-# Generate a spline stroke brush
-brush = get_spline_stroke_brush(sx, sy, brush_radius)
-
-# Display the generated brush (for demonstration purposes)
-import matplotlib.pyplot as plt
-plt.imshow(brush)
-plt.show()
+spline = DifferentiableSpline(control_points, canvas_size=(128, 128), device='cpu')
 ```
 
-### Batch Rendering
-
-You can render splines in batches to efficiently process multiple splines in parallel. For example, you can render splines for multiple data points simultaneously.
+### 2. Interpolate and Render
+Specify colors and brush sizes, then generate the canvas:
 
 ```python
-import torch
-from spline_interpolation import get_spline_stroke_brush
+colors = torch.tensor([
+    [1.0, 0.0, 0.0],  # Red
+    [0.0, 1.0, 0.0],  # Green
+    [0.0, 0.0, 1.0]   # Blue
+])
 
-# Define control points (x and y coordinates) for multiple brushes in a batch
-sx = torch.tensor([[0, 2, 5, 7, 8], [1, 3, 4, 6, 9]], dtype=torch.float32)
-sy = torch.tensor([[3, 2, 0, 2, 0], [4, 2, 1, 3, 1]], dtype=torch.float32)
+brush_sizes = torch.tensor([10.0])  # Single brush size for all strokes
 
-# Specify the brush radius for each brush in the batch
-brush_radius = [5, 3]  # List of brush radii
-
-# Generate spline stroke brushes for the batch
-brushes = []
-for x, y, r in zip(sx, sy, brush_radius):
-    brush = get_spline_stroke_brush(x, y, r)
-    brushes.append(brush)
-
-# Display the generated brushes (for demonstration purposes)
-import matplotlib.pyplot as plt
-for brush in brushes:
-    plt.imshow(brush)
-    plt.show()
+canvas = spline.generate_spline_canvas(colors, brush_sizes, num_points=300)
+spline.show_canvas(canvas)
 ```
 
-## Examples
+---
 
-For more detailed usage examples and application scenarios, please refer to the [example notebooks]([examples/](https://github.com/notabee/differentiable-spline-curve/blob/main/differentiable-rendered-splines-pytorch.ipynb)) included in this repository.
+## API Reference
 
-## Contributing
+### `DifferentiableSpline`
 
-Contributions to this project are welcome! If you have suggestions, improvements, or bug fixes, please open an issue or submit a pull request.
+#### Constructor
+```python
+DifferentiableSpline(control_points, canvas_size=(128, 128), device='cpu')
+```
+- **control_points**: `torch.Tensor` of shape `(3, 2)`. Control points for the quadratic Bézier curve.
+- **canvas_size**: Tuple of integers specifying the canvas dimensions.
+- **device**: PyTorch device (`'cpu'` or `'cuda'`).
+
+#### Methods
+- **`interpolate_points(num_points=100)`**: 
+  Interpolates `num_points` along the Bézier curve.
+- **`generate_spline_canvas(colors, brush_sizes, num_points=300, test_mode=False)`**: 
+  Renders the spline on a canvas.
+- **`show_canvas(canvas)`**: 
+  Visualizes the generated canvas using `matplotlib`.
+
+---
+
+## Example Output
+
+Below is a generated spline rendered with smooth blending:
+
+![Spline Example](example.png)
+
+---
+
+## Contributions
+
+Feel free to submit issues or pull requests to enhance functionality or fix bugs.
+
+---
 
 ## License
 
-This project is licensed under the Apache License.
+This project is licensed under the [MIT License](LICENSE).
